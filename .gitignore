@@ -10,8 +10,16 @@ from pyDANDIA import logs
 import numpy as np
 import select_image_trios
 
+""" Если честно,то я столько литературы перечитала,но нормального примера кода так и не нашла. 
+Венгерский метод - вообще жуть, но я думаю,что в моём случае подошла бы и редукция из Аварийного метода отождествления.
+Тут - код,который я нашла на зарубежном сайте и его немного переделала,но так и не поняла,как вписать сюда наши данные. 
+Думаю, можно представить документы с данными,как каталоги, а потом попарно объеденить в одну таблицу.
+В общем, я сама не сильно поняла этот код(дословно перевести некоторые термины трудно) и ,скорее всего, баллы за это мне нельзя поставить,
+но я старалась. "
+
+
 def extract_star_catalog(params,filter_id,log):
-    """Function to read the photometric and star catalog data from a metadata file"""
+    """Функция чтения фотометрических данных и данных звездного каталога из файла метаданных"""
     
     meta_file = params[filter_id]
     
@@ -53,7 +61,7 @@ def extract_star_catalog(params,filter_id,log):
     return star_catalog, image_table
 
 def combine_star_catalogs(datasets,log):
-    """Function to cross-match stars between datasets"""
+    """Функция перекрестного сопоставления звезд между наборами данных"""
     
     (f1,dataset1,f2,dataset2) = select_first_catalog_match(datasets,log)
     
@@ -78,7 +86,7 @@ def combine_star_catalogs(datasets,log):
     return combined_catalog, col_names, formats, units,f1,f2,f3
     
     def init_combined_catalog(datasets,f1,log):
-    """Function to build the combined catalog data structure"""
+    """Функция построения комбинированной структуры данных каталога"""
     
     max_stars = len(datasets[f1])
     
@@ -104,7 +112,7 @@ def combine_star_catalogs(datasets,log):
     return combined_catalog, col_names, formats, units
     
     def select_first_catalog_match(datasets,log):
-    """Function to select the first set of catalogs to cross-match"""
+    """Функция выбора первого набора каталогов для перекрестного сопоставления"""
     
     if datasets['ip'] != None:
         f1 = 'ip'
@@ -134,7 +142,7 @@ def combine_star_catalogs(datasets,log):
     return f1,dataset1,f2,dataset2
         
 def select_second_catalog_match(datasets,f1,log):
-    """Function to identify the second pair of datasets to cross-match"""
+    """Функция для определения второй пары наборов данных для перекрестного сопоставления"""
     
     if f1 == 'ip' and datasets['gp'] != None:
         f3 = 'gp'
@@ -176,9 +184,9 @@ def cross_match_stars(f1,dataset1,f2,dataset2,log):
 
 def populate_combined_catalog(combined_catalog,f1,dataset1,match_index,log,
                               f2=None,dataset2=None,f3=None,dataset3=None):
-    """Function to populate the data table for the combined catalog with two
-    cross-matched datasets.  If the catalog is currently empty, the function 
-    uses the first dataset as the main index for the combined catalog."""
+    """Функция для заполнения таблицы данных для объединенного каталога двумя
+    наборы данных с перекрестным соответствием. Если в настоящий момент каталог пуст, функция
+    использует первый набор в основном индексе для объединенного каталога."""
     
     if len(np.where(combined_catalog != 0.0)[0]) == 0:
         
@@ -261,7 +269,7 @@ def identify_image_trios(params,datasets,log):
     
 def output_combined_catalog(combined_catalog,col_names,formats,units,f1,f2,f3,
                             image_trios, params,log):
-    """Function to write the combined catalog to a FITS table"""
+    """Функция записи объединенного каталога в таблицу FITS"""
 
     header = fits.Header()
     header['NSTARS'] = len(combined_catalog)
